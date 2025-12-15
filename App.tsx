@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
 import { LeadList } from './components/LeadList';
@@ -6,17 +6,38 @@ import { LeadDetail } from './components/LeadDetail';
 import { AIChat } from './components/AIChat';
 import { MOCK_LEADS } from './services/mockData';
 import { useAppStore } from './store/appStore';
+import { AuthShell } from './components/auth/AuthShell';
 
 const App: React.FC = () => {
   const currentView = useAppStore((s) => s.currentView);
   const selectedLead = useAppStore((s) => s.selectedLead);
   const selectLead = useAppStore((s) => s.selectLead);
   const setView = useAppStore((s) => s.setView);
+  const user = useAppStore((s) => s.user);
+  const setAuth = useAppStore((s) => s.setAuth);
+  const initializing = useAppStore((s) => s.initializing);
+  const setInitializing = useAppStore((s) => s.setInitializing);
 
   // Real-time update simulation (Polling effect)
   const [lastUpdate, setLastUpdate] = React.useState(new Date());
 
   useEffect(() => {
+    // hydrate auth from localStorage once on boot
+    if (initializing) {
+      const raw = localStorage.getItem('linkly_auth');
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed?.user && parsed?.accessToken) {
+            setAuth(parsed.user, parsed.accessToken);
+          }
+        } catch {
+          // ignore bad data
+        }
+      }
+      setInitializing(false);
+    }
+
     const interval = setInterval(() => {
       setLastUpdate(new Date());
     }, 30000);
@@ -56,6 +77,10 @@ const App: React.FC = () => {
         );
     }
   };
+
+  if (!user || initializing) {
+    return <AuthShell />;
+  }
 
   return (
     <div className="flex h-screen bg-[#f3f4f6]">
