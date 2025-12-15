@@ -5,6 +5,7 @@ import { LeadList } from './components/LeadList';
 import { LeadDetail } from './components/LeadDetail';
 import { AIChat } from './components/AIChat';
 import { MOCK_LEADS } from './services/mockData';
+import { fetchLeads } from './services/leadsService';
 import { useAppStore } from './store/appStore';
 import { AuthShell } from './components/auth/AuthShell';
 
@@ -18,8 +19,10 @@ const App: React.FC = () => {
   const initializing = useAppStore((s) => s.initializing);
   const setInitializing = useAppStore((s) => s.setInitializing);
 
-  // Real-time update simulation (Polling effect)
+  // Real-time update simulation (Polling effect) & lead loading
   const [lastUpdate, setLastUpdate] = React.useState(new Date());
+  const [leads, setLeads] = React.useState(MOCK_LEADS);
+  const [leadsLoading, setLeadsLoading] = React.useState(false);
 
   useEffect(() => {
     // hydrate auth from localStorage once on boot
@@ -37,6 +40,23 @@ const App: React.FC = () => {
       }
       setInitializing(false);
     }
+
+    const loadLeads = async () => {
+      setLeadsLoading(true);
+      try {
+        const apiLeads = await fetchLeads();
+        if (Array.isArray(apiLeads) && apiLeads.length > 0) {
+          setLeads(apiLeads);
+        }
+      } catch (e) {
+        console.error('Failed to load leads from API, falling back to mock data', e);
+        setLeads(MOCK_LEADS);
+      } finally {
+        setLeadsLoading(false);
+      }
+    };
+
+    loadLeads();
 
     const interval = setInterval(() => {
       setLastUpdate(new Date());
@@ -61,7 +81,7 @@ const App: React.FC = () => {
       case 'dashboard':
         return <Dashboard />;
       case 'leads':
-        return <LeadList leads={MOCK_LEADS} onSelectLead={handleSelectLead} />;
+        return <LeadList leads={leads} onSelectLead={handleSelectLead} isLoading={leadsLoading} />;
       case 'analytics':
         return (
             <div className="flex flex-col items-center justify-center h-full text-gray-400">

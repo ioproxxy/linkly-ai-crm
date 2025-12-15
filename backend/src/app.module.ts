@@ -7,6 +7,7 @@ import { LeadsModule } from './modules/leads/leads.module';
 import { CampaignsModule } from './modules/campaigns/campaigns.module';
 import { AiModule } from './modules/ai/ai.module';
 import { DiscoveryModule } from './modules/discovery/discovery.module';
+import { ActivityModule } from './modules/activity/activity.module';
 import { LoggingModule } from './modules/logging/logging.module';
 import { HealthModule } from './modules/health/health.module';
 
@@ -25,6 +26,7 @@ import { HealthModule } from './modules/health/health.module';
     CampaignsModule,
     AiModule,
     DiscoveryModule,
+    ActivityModule,
   ],
 })
 export class AppModule {}

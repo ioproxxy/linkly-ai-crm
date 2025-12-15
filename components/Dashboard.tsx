@@ -4,6 +4,7 @@ import {
 } from 'recharts';
 import { CHART_DATA, MOCK_CAMPAIGNS } from '../services/mockData';
 import { Users, Send, MessageSquare, Calendar } from 'lucide-react';
+import { ActivityPanel } from './ActivityPanel';
 
 export const Dashboard: React.FC = () => {
   // Aggregate stats
@@ -100,6 +101,8 @@ export const Dashboard: React.FC = () => {
         </div>
 
       </div>
+
+      <ActivityPanel />
     </div>
   );
 };

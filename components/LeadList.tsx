@@ -5,9 +5,10 @@ import { Search, Filter, ChevronRight, AlertCircle, CheckCircle } from 'lucide-r
 interface LeadListProps {
   leads: Lead[];
   onSelectLead: (lead: Lead) => void;
+  isLoading?: boolean;
 }
 
-export const LeadList: React.FC<LeadListProps> = ({ leads, onSelectLead }) => {
+export const LeadList: React.FC<LeadListProps> = ({ leads, onSelectLead, isLoading }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('All');
 
@@ -71,6 +72,29 @@ export const LeadList: React.FC<LeadListProps> = ({ leads, onSelectLead }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 text-sm">
+            {isLoading && filteredLeads.length === 0 && (
+              [...Array(5)].map((_, idx) => (
+                <tr key={idx} className="animate-pulse">
+                  <td className="p-4">
+                    <div className="h-4 bg-gray-200 rounded w-2/3 mb-2" />
+                    <div className="h-3 bg-gray-100 rounded w-1/3" />
+                  </td>
+                  <td className="p-4">
+                    <div className="h-4 bg-gray-100 rounded w-1/2" />
+                  </td>
+                  <td className="p-4">
+                    <div className="h-6 bg-gray-100 rounded-full w-20" />
+                  </td>
+                  <td className="p-4">
+                    <div className="h-3 bg-gray-100 rounded w-16" />
+                  </td>
+                  <td className="p-4">
+                    <div className="h-3 bg-gray-100 rounded w-24" />
+                  </td>
+                  <td className="p-4" />
+                </tr>
+              ))
+            )}
             {filteredLeads.map((lead) => (
               <tr 
                 key={lead.id} 
@@ -113,7 +137,7 @@ export const LeadList: React.FC<LeadListProps> = ({ leads, onSelectLead }) => {
                 </td>
               </tr>
             ))}
-            {filteredLeads.length === 0 && (
+            {!isLoading && filteredLeads.length === 0 && (
               <tr>
                 <td colSpan={6} className="p-8 text-center text-gray-400">
                   No leads found matching your criteria.
