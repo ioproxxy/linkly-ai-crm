@@ -106,6 +106,19 @@ model LeadDiscoverySource {
   createdAt   DateTime @default(now())
 }
 
+model DiscoveryJob {
+  id          String   @id @default(cuid())
+  ownerId     String?
+  owner       User?    @relation(fields: [ownerId], references: [id])
+  keyword     String
+  status      String   @default("pending")
+  attempts    Int      @default(0)
+  maxAttempts Int      @default(3)
+  lastError   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 @@index([email], map: "idx_lead_email")
 @@index([campaignId], map: "idx_lead_campaign")
 @@index([createdAt], map: "idx_lead_created")
