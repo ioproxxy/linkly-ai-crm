@@ -1,35 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
 import { LeadList } from './components/LeadList';
 import { LeadDetail } from './components/LeadDetail';
 import { AIChat } from './components/AIChat';
 import { MOCK_LEADS } from './services/mockData';
-import { Lead } from './types';
+import { useAppStore } from './store/appStore';
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState('dashboard');
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-  
+  const currentView = useAppStore((s) => s.currentView);
+  const selectedLead = useAppStore((s) => s.selectedLead);
+  const selectLead = useAppStore((s) => s.selectLead);
+  const setView = useAppStore((s) => s.setView);
+
   // Real-time update simulation (Polling effect)
-  const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [lastUpdate, setLastUpdate] = React.useState(new Date());
 
   useEffect(() => {
-    // Simulate incoming data socket
     const interval = setInterval(() => {
       setLastUpdate(new Date());
-    }, 30000); 
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
 
-  const handleSelectLead = (lead: Lead) => {
-    setSelectedLead(lead);
-    setCurrentView('leads-detail');
+  const handleSelectLead = (lead: any) => {
+    selectLead(lead);
   };
 
   const handleBackToLeads = () => {
-    setSelectedLead(null);
-    setCurrentView('leads');
+    selectLead(null);
   };
 
   const renderContent = () => {
@@ -60,7 +59,7 @@ const App: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-[#f3f4f6]">
-      <Sidebar currentView={currentView === 'leads-detail' ? 'leads' : currentView} setView={setCurrentView} />
+      <Sidebar currentView={currentView === 'leads-detail' ? 'leads' : currentView} setView={setView} />
       
       <main className="flex-1 ml-64 p-8 overflow-y-auto relative">
         {/* Top Header */}

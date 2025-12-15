@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  organization String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  campaigns Campaign[]
+  activities ActivityLog[]
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  name        String
+  status      String
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  leads       Lead[]
+  executions  CampaignExecutionLog[]
+}
+
+model Lead {
+  id            String   @id @default(cuid())
+  email         String
+  name          String
+  company       String
+  websiteUrl    String?
+  score         Int      @default(0)
+  status        String
+  campaignId    String?
+  campaign      Campaign? @relation(fields: [campaignId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime?
+
+  aiMemories    AiMemory[]
+}
+
+model AiMemory {
+  id          String   @id @default(cuid())
+  leadId      String?
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+  campaignId  String?
+  campaign    Campaign? @relation(fields: [campaignId], references: [id])
+  kind        String
+  content     Json
+  createdAt   DateTime @default(now())
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  action      String
+  context     Json?
+  createdAt   DateTime @default(now())
+}
+
+model AiActionLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  leadId      String?
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+  campaignId  String?
+  campaign    Campaign? @relation(fields: [campaignId], references: [id])
+  agent       String
+  input       Json
+  output      Json?
+  error       String?
+  createdAt   DateTime @default(now())
+}
+
+model CampaignExecutionLog {
+  id          String   @id @default(cuid())
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  phase       String
+  status      String
+  details     Json?
+  createdAt   DateTime @default(now())
+}
+
+model LeadDiscoverySource {
+  id          String   @id @default(cuid())
+  leadId      String
+  lead        Lead     @relation(fields: [leadId], references: [id])
+  source      String
+  url         String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+}
+
+@@index([email], map: "idx_lead_email")
+@@index([campaignId], map: "idx_lead_campaign")
+@@index([createdAt], map: "idx_lead_created")
