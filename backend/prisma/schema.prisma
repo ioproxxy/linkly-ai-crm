@@ -19,6 +19,8 @@ model User {
 
   campaigns Campaign[]
   activities ActivityLog[]
+  aiActions  AiActionLog[]
+  discoveryJobs DiscoveryJob[]
 }
 
 model Campaign {
@@ -32,6 +34,8 @@ model Campaign {
 
   leads       Lead[]
   executions  CampaignExecutionLog[]
+  aiMemories  AiMemory[]
+  aiActions   AiActionLog[]
 }
 
 model Lead {
@@ -49,6 +53,12 @@ model Lead {
   deletedAt     DateTime?
 
   aiMemories    AiMemory[]
+  aiActions     AiActionLog[]
+  discoverySources LeadDiscoverySource[]
+
+  @@index([email], map: "idx_lead_email")
+  @@index([campaignId], map: "idx_lead_campaign")
+  @@index([createdAt], map: "idx_lead_created")
 }
 
 model AiMemory {
@@ -118,7 +128,3 @@ model DiscoveryJob {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
-
-@@index([email], map: "idx_lead_email")
-@@index([campaignId], map: "idx_lead_campaign")
-@@index([createdAt], map: "idx_lead_created")
