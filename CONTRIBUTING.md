@@ -15,8 +15,7 @@ If you own this repository and want to add team members or collaborators, you ha
 
 #### GitHub Free Account
 With a free account, you can:
-- Add unlimited collaborators to public repositories
-- Add collaborators to private repositories (with limitations on the number of collaborators)
+- Add unlimited collaborators to both public and private repositories
 
 #### GitHub Pro Account
 With GitHub Pro, you get additional benefits:
@@ -75,7 +74,7 @@ If you currently have GitHub Pro and want better team collaboration:
 1. Go to your GitHub settings: https://github.com/settings/billing
 2. Under "Plans and usage", click **Change plan**
 3. Select **GitHub Team** for organization-level collaboration
-4. Team plans start at $4 per user/month (when billed annually)
+4. For current pricing, visit: https://github.com/pricing
 
 ## Development Setup
 
